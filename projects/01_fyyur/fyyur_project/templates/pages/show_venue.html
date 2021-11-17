@@ -1,0 +1,118 @@
+{% extends 'layouts/main.html' %}
+{% block title %}Venue Search{% endblock %}
+{% block content %}
+<div class="row">
+	<div class="col-sm-6">
+		<h1 class="monospace">
+			{{ venue.name }}
+		</h1>
+		<p class="subtitle">
+			ID: {{ venue.id }}
+		</p>
+		<div class="genres">
+			{% for genre in venue.genres.strip('{}').split(',') %}
+			<span class="genre">{{ genre }}</span>
+			{% endfor %}
+		</div>
+		<p>
+			<i class="fas fa-globe-americas"></i> {{ venue.city }}, {{ venue.state }}
+		</p>
+		<p>
+			<i class="fas fa-map-marker"></i> {% if venue.address %}{{ venue.address }}{% else %}No Address{% endif %}
+		</p>
+		<p>
+			<i class="fas fa-phone-alt"></i> {% if venue.phone %}{{ venue.phone }}{% else %}No Phone{% endif %}
+		</p>
+		<p>
+			<i class="fas fa-link"></i> {% if venue.website %}<a href="{{ venue.website }}" target="_blank">{{ venue.website }}</a>{% else %}No Website{% endif %}
+		</p>
+		<p>
+			<i class="fab fa-facebook-f"></i> {% if venue.facebook_link %}<a href="{{ venue.facebook_link }}" target="_blank">{{ venue.facebook_link }}</a>{% else %}No Facebook Link{% endif %}
+		</p>
+		{% if venue.seeking_talent %}
+		<div class="seeking">
+			<p class="lead">Currently seeking talent</p>
+			<div class="description">
+				<i class="fas fa-quote-left"></i> {{ venue.seeking_description }} <i class="fas fa-quote-right"></i>
+			</div>
+		</div>
+		{% else %}	
+		<p class="not-seeking">
+			<i class="fas fa-moon"></i> Not currently seeking talent
+		</p>
+		{% endif %}
+	</div>
+	<div class="col-sm-6">
+		<img src="{{ venue.image_link }}" alt="Venue Image" />
+	</div>
+</div>
+<section>
+	<h2 class="monospace">{{ upcoming_shows|length }} Upcoming {% if upcoming_shows|length == 1 %}Show{% else %}Shows{% endif %}</h2>
+	<div class="row">
+		{%for show in upcoming_shows %}
+		<div class="col-sm-4">
+			<div class="tile tile-show">
+				<img src="{{ show.artist.image_link }}" alt="Show Artist Image" />
+				<h5><a href="/artists/{{ show.artist_id }}">{{ show.artist.name }}</a></h5>
+				<h6>{{ show.start_time|datetime('full') }}</h6>
+			</div>
+		</div>
+		{% endfor %}
+	</div>
+</section>
+<section>
+	<h2 class="monospace">{{ previous_shows|length }} Past {% if previous_shows|length == 1 %}Show{% else %}Shows{% endif %}</h2>
+	<div class="row">
+		{%for show in previous_shows %}
+		<div class="col-sm-4">
+			<div class="tile tile-show">
+				<img src="{{ show.artist.image_link }}" alt="Show Artist Image" />
+				<h5><a href="/artists/{{ show.artist_id }}">{{ show.artist.name }}</a></h5>
+				<h6>{{ show.start_time|datetime('full') }}</h6>
+			</div>
+		</div>
+		{% endfor %}
+	</div>
+</section>
+
+<form>
+	<input type="submit" 
+		   value="Edit" 
+		   formmethod="get" 
+		   formaction="{{url_for('edit_venue', venue_id=venue.id) }}" 
+		   class="btn btn-primary btn-lg">
+	<button type="button" class="btn btn-danger btn-lg" data-toggle="modal" data-target="#DeleteModal" data-keyboard="true">
+	Delete
+	</button>
+</form>
+  
+  <!-- Modal -->
+  <div class="modal fade" id="DeleteModal" tabindex="-1" role="dialog" aria-labelledby="DeleteModalLabel" aria-hidden="true">
+	<div class="modal-dialog" role="document">
+	  <div class="modal-content">
+		<div class="modal-header">
+		  <h5 class="modal-title" id="DeleteModalLabel">Delete Venue</h5>
+		  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+			<span aria-hidden="true">&times;</span>
+		  </button>
+		</div>
+		<div class="modal-body">
+		  <h4>Deleting this venue, will delete all shows associated with it.</h4>
+		  <h4>Are you sure?</h4>
+		</div>
+		<form>
+			<input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+			<div class="modal-footer">
+			<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+			<input type="submit" 
+			value="Delete" 
+			class="btn btn-danger btn-lg" 
+			formmethod="post" 
+			formaction="{{url_for('delete_venue', venue_id=venue.id) }}"> 
+			</div>
+		</form>
+	  </div>
+	</div>
+  </div>
+{% endblock %}
+

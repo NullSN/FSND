@@ -1,0 +1,41 @@
+{% extends 'layouts/main.html' %}
+{% block title %}Fyyur{% endblock %}
+{% block content %}
+<div class="row">
+	<div class="col-sm-6">
+		<h1>Fyyur 🔥</h1>
+		<p class="lead">Where musical artists meet musical venues.</p>
+		<h3>
+			<a href="/venues"><button class="btn btn-primary btn-lg">Find a venue</button></a>
+			<a href="/venues/create"><button class="btn btn-default btn-lg">Post a venue</button></a>
+		</h3>
+		<h3>
+			<a href="/artists"><button class="btn btn-primary btn-lg">Find an artist</button></a>
+			<a href="/artists/create"><button class="btn btn-default btn-lg">Post an artist</button></a>
+		</h3>
+		<p class="lead">Publicize about your show for free.</p>
+		<h3>
+			<a href="/shows/create"><button class="btn btn-default btn-lg">Post a show</button></a>
+		</h3>
+	</div>
+	<div class="col-sm-6 hidden-sm hidden-xs">
+		<img id="front-splash" src="{{ url_for('static',filename='img/front-splash.jpg') }}" alt="Front Photo of Musical Band" />
+	</div>
+</div>
+<section>
+	<h2 class="monospace">Most recent action.</h2>
+	<div class="row">
+		{%for item in recent_action %} 
+		<div class="col-sm-6 col-md-4">
+			<div class="tile tile-show btn-dark">
+				{% if item.address == Null %}<a href="/artists/{{ item.id }}"> {%else%} <a href="/venues/{{ item.id }}">{% endif %} 
+				<h4 class="card-title">{{item.name}}</h4>
+				<h5 class="card-subtitle">{{item.city}}</h5>
+				<img src="{{ item.image_link }}">
+			</a>
+			</div>
+		</div>
+		{% endfor %}
+	</div>
+</section>
+{% endblock %}
